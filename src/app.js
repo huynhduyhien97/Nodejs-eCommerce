@@ -2,6 +2,7 @@ const compression = require( 'compression' );
 const express = require('express');
 const { default : helmet } = require('helmet');
 const morgan = require( 'morgan' );
+require('dotenv').config();
 const app = express();
 
 // init middleware
@@ -11,8 +12,8 @@ app.use(compression());
 
 // init database
 require('./dbs/init.mongodb');
-const { checkOverload } = require('./helpers/check.connect');
-checkOverload();
+// const { checkOverload } = require('./helpers/check.connect');
+// checkOverload();
 
 // inti routes
 app.get('/', (req, res, next) => {
@@ -20,7 +21,7 @@ app.get('/', (req, res, next) => {
 
 	return res.status(200).json({
 		message: 'Welcome to WSV eCommerce API',
-		metadata: strCompress.repeat(10000),
+		// metadata: strCompress.repeat(10000),
 	});
 })
 

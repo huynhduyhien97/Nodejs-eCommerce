@@ -1,9 +1,11 @@
 'use strict'
 
+// const {  }
 const mongoose = require('mongoose');
 const { countConnect } = require('../helpers/check.connect');
+const { db : {host, name, port}} = require('../configs/config.mongodb');
 
-const connectString = `mongodb://localhost:27017/shopDEV`
+const connectString = `mongodb://${host}:${port}/${name}`;
 
 // Singleton Pattern - chỉ khởi tạo một kết nối duy nhất
 class Database {
@@ -23,7 +25,7 @@ class Database {
 		}).then( _ => {
 			console.log(`Connected MongoDB Success Pro`, countConnect())
 		})
-		.then( err => console.log(`Error Connect!`) )
+		.catch( err => console.log(err) )
 	}
 	static getInstance() {
 		if (!Database.instance) {
