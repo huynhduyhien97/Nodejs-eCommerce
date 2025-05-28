@@ -6,9 +6,11 @@ require('dotenv').config();
 const app = express();
 
 // init middleware
-app.use(morgan("dev"));
-app.use(helmet());
-app.use(compression());
+app.use(morgan("dev"));  // log request to console
+app.use(helmet()); 		 // hạn chế các thông tin về server, bảo mật hơn
+app.use(compression());  // nén dữ liệu trả về, giảm băng thông, tăng tốc độ tải trang
+app.use(express.json()); // parse json request body
+app.use(express.urlencoded({ extended: true }));
 
 // init database
 require('./dbs/init.mongodb');
@@ -16,14 +18,7 @@ require('./dbs/init.mongodb');
 // checkOverload();
 
 // inti routes
-app.get('/', (req, res, next) => {
-	const strCompress = 'Hello DISCONMEMAY';
-
-	return res.status(200).json({
-		message: 'Welcome to WSV eCommerce API',
-		// metadata: strCompress.repeat(10000),
-	});
-})
+app.use('/', require('./routes'))
 
 // handle error
 
