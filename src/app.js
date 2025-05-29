@@ -22,4 +22,22 @@ app.use('/', require('./routes'))
 
 // handle error
 
+// middleware (có 3 tham số)
+app.use((req, res, next) => {
+	const error = new Error('Not Found');
+	error.status = 404;
+	next(error);
+})
+
+// handle error (có 4 tham số)
+app.use((error, req, res, next) => {
+	const statusCode = error.status || 500; // HTTP status code, mặc định là 500
+
+	return res.status(statusCode).json({
+		status: 'error',
+		code: statusCode,
+		message: error.message || 'Internal Server Error',
+	})
+})
+
 module.exports = app;
