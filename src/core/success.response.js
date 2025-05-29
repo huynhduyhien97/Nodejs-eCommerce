@@ -1,6 +1,6 @@
 'use strict'
 
-const { StatusCodes, ReasonPhrases } = require('../helpers/httpStatusCode')
+const { StatusCodes, ReasonPhrases } = require('../utils/httpStatusCode')
 
 class SuccessResponse {
 	constructor({ message, statusCode = StatusCodes.OK, reasonStatusCode = ReasonPhrases.OK, metadata = {} }) {
@@ -28,5 +28,5 @@ class CREATED extends SuccessResponse {
 }
 
 module.exports = {
-	OK, CREATED
+	SuccessResponse, OK, CREATED
 }

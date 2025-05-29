@@ -7,6 +7,7 @@ const KeyTokenService = require( "./keyToken.service" )
 const {createTokenPair} = require( "../auth/authUtils" )
 const {getInfoData} = require( "../utils" )
 const {BadRequestError} = require( "../core/error.response" )
+const {findByEmail} = require( "./shop.service" )
 
 const RoleShop = {
 	SHOP: 'SHOP',
@@ -17,9 +18,46 @@ const RoleShop = {
 
 class AccesService {
 
+	/**
+	 * 	1 - check email in db
+	 *  2 - matching password
+	 *  3 - create access token and refresh token then save
+	 *  4 - generate tokens
+	 *  5 - get data return login
+	 */
+	static login = async ({ email, password, refreshToken = null }) => {
+		// Step 1
+		const foundShop = await findByEmail({ email })
+		if (!foundShop) throw new BadRequestError('Shop not registered!')
+
+		// Step 2
+		const match = bcrypt.compare( password, foundShop.password )
+		if (!match) throw new AuthFailureError('Authentication error!')
+
+		// Step 3
+		// create public key and private key
+		const publicKey = crypto.randomBytes(64).toString('hex')
+		const privateKey = crypto.randomBytes(64).toString('hex')
+
+		// Step 4
+		// create token pair
+		const { _id: userId } = foundShop
+		const tokens = await createTokenPair({ userId: userId, email }, publicKey, privateKey)
+
+		await KeyTokenService.createKeyToken({
+			refreshToken: tokens.refreshToken,
+			privateKey, publicKey, userId
+		})
+
+		return {
+			shop: getInfoData({ fields: ['_id', 'name', 'email'], object: foundShop }),
+			tokens
+		}
+	}
+
 	static signUp = async ({ name, email, password }) => {
 		
-		//step 1: check email exists?
+		// step 1: check email exists?
 		// lean() : query faster, tra về object js thuần
 		const holderShop = await shopModel.findOne({ email }).lean()
 		if (holderShop) {
@@ -32,8 +70,9 @@ class AccesService {
 		})
 
 		if (newShop) {
-			const privateKey = crypto.randomBytes(64).toString('hex')
+			// create public key and private key
 			const publicKey = crypto.randomBytes(64).toString('hex')
+			const privateKey = crypto.randomBytes(64).toString('hex')
 
 			console.log({ privateKey, publicKey }) // save collection KeyStore
 
