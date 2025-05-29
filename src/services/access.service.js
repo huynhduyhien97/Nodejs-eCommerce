@@ -35,24 +35,6 @@ class AccesService {
 			})
 
 			if (newShop) {
-				// created privateKey (để cho người dùng, không lưu trên hệ thống, sign token), publicKey (lưu trên hệ thống verify token)
-				// giả sử hacker hack được hệ thống thì không lấy được privateKey, chỉ lấy được publicKey có nhiệm vụ verify token thôi
-				// lấy được cả 2 rât khó, xác suất rất thấp
-
-				// rsa : thuật toán bất đối xứng
-				// const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-				// 	modulusLength: 4096,
-				// 	publicKeyEncoding: {
-				// 		type: 'pkcs1', // Public Key CryptoGraphy Standard 1
-				// 		format: 'pem', // PEM (Privacy Enhanced Mail) format
-				// 	},
-				// 	privateKeyEncoding: {
-				// 		type: 'pkcs1', // Public Key CryptoGraphy Standard 1
-				// 		format: 'pem', // PEM (Privacy Enhanced Mail) format
-				// 	},
-				// })
-
-
 				const privateKey = crypto.randomBytes(64).toString('hex')
 				const publicKey = crypto.randomBytes(64).toString('hex')
 
