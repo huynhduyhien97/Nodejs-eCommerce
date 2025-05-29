@@ -6,7 +6,7 @@ const crypto = require( "node:crypto" )
 const KeyTokenService = require( "./keyToken.service" )
 const {createTokenPair} = require( "../auth/authUtils" )
 const {getInfoData} = require( "../utils" )
-const {BadRequestError} = require( "../core/error.response" )
+const {BadRequestError, AuthFailureError} = require( "../core/error.response" )
 const {findByEmail} = require( "./shop.service" )
 
 const RoleShop = {
@@ -17,6 +17,11 @@ const RoleShop = {
 }
 
 class AccesService {
+
+	static logout = async (keyStore) => {
+		const delKey = await KeyTokenService.removeKeyById( keyStore._id )
+		return delKey
+	}
 
 	/**
 	 * 	1 - check email in db
