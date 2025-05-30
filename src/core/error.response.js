@@ -4,7 +4,7 @@ const { StatusCodes, ReasonPhrases } = require('../utils/httpStatusCode')
 
 class ErrorResponse extends Error {
 	constructor(message, status) {
-		super()
+		super(message)
 		this.status = status
 	}
 }
@@ -33,9 +33,17 @@ class NotFoundError extends ErrorResponse {
 	}
 }
 
+class ForbiddenError extends ErrorResponse {
+	constructor(message = ReasonPhrases.FORBIDDEN, statusCode = StatusCodes.FORBIDDEN) {
+		super(message, statusCode)
+	}
+}
+
 module.exports = { 
+	ErrorResponse,
 	ConflictRequestError,
 	BadRequestError,
 	AuthFailureError,
 	NotFoundError,
+	ForbiddenError,
 }
