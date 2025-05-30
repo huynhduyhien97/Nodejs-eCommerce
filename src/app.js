@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 	next(error);
 })
 
-// handle error (có 4 tham số)
+// handle error (quản lý lỗi, có 4 tham số)
 app.use((error, req, res, next) => {
 	const statusCode = error.status || 500; // HTTP status code, mặc định là 500
 
