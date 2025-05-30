@@ -81,8 +81,6 @@ const authentication = asyncHandler( async (req, res, next) => {
 	6 - OK => return next()
 */
 const authenticationV2 = asyncHandler( async (req, res, next) => {
-	console.log('???')
-
 	// 1
 	const userId = req.headers[HEADER.CLIENT_ID];
 	if (!userId) throw new AuthFailureError('Invalid request!')
@@ -113,6 +111,7 @@ const authenticationV2 = asyncHandler( async (req, res, next) => {
 		const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
 		if (userId !== decodeUser.userId) throw new AuthFailureError('Invalid user!')
 		req.keyStore = keyStore;
+		req.user = decodeUser;
 		return next()
 	} catch (error) {
 		throw error
