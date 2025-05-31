@@ -15,7 +15,7 @@ const HEADER = {
 const createTokenPair = async ( payload, publicKey, privateKey ) => {
 	try {
 		// accessToken
-		const accessToken = await JWT.sign( payload, publicKey, {
+		const accessToken = await JWT.sign( payload, publicKey, { // publicKey ở đây hình như phải là privateKey thì phải
 			expiresIn: '2 days',
 		})
 
@@ -81,6 +81,7 @@ const authentication = asyncHandler( async (req, res, next) => {
 	6 - OK => return next()
 */
 const authenticationV2 = asyncHandler( async (req, res, next) => {
+	// console.log(`headers :: `, req.headers)
 	// 1
 	const userId = req.headers[HEADER.CLIENT_ID];
 	if (!userId) throw new AuthFailureError('Invalid request!')
