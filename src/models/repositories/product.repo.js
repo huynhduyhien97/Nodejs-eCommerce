@@ -84,6 +84,10 @@ const findProduct = async ({ product_id, unSelect }) => {
 		.select(getUnSelectData(unSelect))
 }
 
+const updateProductById = async ({ productId, payload, model, isNew = true }) => {
+	return await model.findByIdAndUpdate(productId, payload, { new: isNew });
+}
+
 module.exports = {
 	findAllDraftsForShop,
 	findAllPublishForShop,
@@ -92,4 +96,5 @@ module.exports = {
 	searchProductByUser,
 	findAllProducts,
 	findProduct,
+	updateProductById,
 }
