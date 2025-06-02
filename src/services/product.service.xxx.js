@@ -13,6 +13,7 @@ const {
 	updateProductById
 } = require( '../models/repositories/product.repo' );
 const {removeUndefinedObject, updateNestedObjectParser} = require( '../utils' );
+const {insertInventory} = require( '../models/repositories/inventory.repo' );
 
 
 // define Factory class to create product
@@ -89,8 +90,19 @@ class Product {
 	}
 
 	// create new product
-	async createProduct(product_id) {
-		return await product.create({ ...this, _id: product_id })
+	async createProduct(productId) {
+		const newProduct = await product.create({ ...this, _id: productId })
+
+		if (newProduct) {
+			// add product_stock in inventory collection
+			await insertInventory({ 
+				productId: newProduct._id,
+				shopId: this.product_shop,
+				stock: this.product_quantity,
+			})
+		}
+
+		return newProduct;
 	}
 
 	// update product
@@ -185,6 +197,25 @@ class Furniture extends Product {
 		if (!newProduct) throw new BadRequestError('Failed to create clothing product');
 
 		return newProduct
+	}
+
+	async updateProduct(productId) {
+		// 1. remove undefined/null attributes
+
+		const objectParams = removeUndefinedObject(this)
+
+		if (objectParams.product_attributes) {
+			// update child
+			await updateProductById({ 
+				productId, 
+				payload: updateNestedObjectParser(objectParams.product_attributes), 
+				model: furniture
+			})
+		}
+
+		const updatedProduct = await super.updateProduct(productId, updateNestedObjectParser(objectParams));
+
+		return updatedProduct
 	}
 }
 

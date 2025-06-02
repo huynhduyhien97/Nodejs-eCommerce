@@ -1,6 +1,5 @@
 'use strict'
 
-const {Schema} = require( 'mongoose' );
 const { product, electronic, clothing, furniture } = require('../../models/product.model');
 const {getSelectData, getUnSelectData} = require( '../../utils' );
 
