@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash');
+const {Schema} = require( 'mongoose' );
 
 const getInfoData = ({ fields = [], object = {} }) => {
 	return _.pick(object, fields);
@@ -52,10 +53,13 @@ const updateNestedObjectParser = obj => {
 	return final
 }
 
+const convertToObjectIdMongodb = id => Schema.Types.ObjectId(id);
+
 module.exports = {
 	getInfoData,
 	getSelectData,
 	getUnSelectData,
 	removeUndefinedObject,
 	updateNestedObjectParser,
+	convertToObjectIdMongodb,
 }
