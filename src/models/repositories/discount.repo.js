@@ -30,7 +30,12 @@ const findAllDiscountCodesUnSelect = async ({ limit, page, sort = 'ctime', filte
 	return documents
 }
 
+const findDiscount = async ({model, filter}) => {
+	return await model.findOne(filter).lean()
+}
+
 module.exports = {
 	findAllDiscountCodesSelect,
 	findAllDiscountCodesUnSelect,
+	findDiscount
 }
