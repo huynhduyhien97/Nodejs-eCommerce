@@ -5,6 +5,9 @@ const morgan = require( 'morgan' );
 require('dotenv').config();
 const app = express();
 
+// init redis
+// require('./redis/init.redis');
+
 // init middleware
 app.use(morgan("dev"));  // log request to console
 app.use(helmet()); 		 // hạn chế các thông tin về server, bảo mật hơn

@@ -1,9 +1,11 @@
 'use strict'
 
 const {BadRequestError} = require( "../core/error.response" );
+const {order} = require( "../models/order.model" );
 const {findCartById} = require( "../models/repositories/cart.repo" );
 const {checkProductByServer} = require( "../models/repositories/product.repo" );
 const {getDiscountAmount} = require( "./discount.service" );
+const {acquireLock, releaseLock} = require( "./redis.service" );
 
 class CheckoutService {
 
@@ -50,7 +52,7 @@ class CheckoutService {
 			const { shopId, shop_discounts = [], item_products = [] } = shop_order_ids[i];
 			// check product available in shop
 			const checkProductServer = await checkProductByServer(item_products);
-			console.log(`checkProductServer`, checkProductServer)
+			// console.log(`checkProductServer`, checkProductServer)
 
 			if (!checkProductServer[0]) throw new BadRequestError(`order wrong`)
 
@@ -94,6 +96,67 @@ class CheckoutService {
 			shop_order_ids,
 			shop_order_ids_new,
 		}
+	}
+
+	static async orderByUser({ shop_order_ids, cartId, userId, user_address = {}, user_payment = {} }) {
+		const { shop_order_ids_new, checkout_order } = await CheckoutService.checkoutReview({ 
+			cartId, 
+			userId, 
+			shop_order_ids
+		})
+
+		// check lại sản phẩm có vượt quá tồn kho hay không
+		const products = shop_order_ids_new.flatMap(order => order.item_products)
+		const acquireProducts = []
+		for (let i = 0; i < products.length; i++)
+		{
+			const { productId, quantity } = products[i]
+			const keyLock = await acquireLock(productId, quantity, cartId)
+			acquireProducts.push(keyLock ? true : false)
+
+			if (keyLock) {
+				await releaseLock(keyLock);
+			}
+		}
+
+		// check neu co 1 san pham khong du ton kho
+		if (acquireProducts.includes(false)) {
+			throw new BadRequestError('Some products are out of stock, please try again later');
+		}
+
+		const newOrder = await order.create({
+			order_userId: userId,
+			order_checkout: checkout_order,
+			order_shipping: user_address,
+			order_payment: user_payment,
+			order_products: shop_order_ids_new,
+		})
+
+		// case: insert thanh cong => remove products in cart
+		if (newOrder) {
+
+		}
+
+		return newOrder
+	}
+
+	/**
+		1> Query orders [Users]
+	*/
+	static async getOrdersByUser() {
+
+	}
+
+	static async getOneOrderByUser() {
+
+	}
+
+	static async cancelOrderByUser() {
+
+	}
+
+	static async updateOrderStatusByShop() {
+		
 	}
 }
 

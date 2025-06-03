@@ -5,8 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-	"dev": "node --watch server.js",
-	"build": "echo \"Building the project...\""
+    "dev": "node --watch server.js",
+    "build": "echo \"Building the project...\""
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mongoose": "^8.15.1",
+    "redis": "3.1.2",
     "slugify": "^1.6.6"
   },
   "devDependencies": {

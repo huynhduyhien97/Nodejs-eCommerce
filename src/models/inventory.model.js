@@ -21,4 +21,6 @@ var inventorySchema = new Schema({
 });
 
 //Export the model
-module.exports = model(DOCUMENT_NAME, inventorySchema);
+module.exports = {
+	inventory: model(DOCUMENT_NAME, inventorySchema),
+}
