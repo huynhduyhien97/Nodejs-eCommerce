@@ -1,5 +1,7 @@
 'use strict'
 
+const {cart} = require( "../cart.model" );
+
 const createUserCart = async ({ userId, product }) => {
 	const query = { cart_userId: userId, cart_state: 'active' };
 	const updateOrInsert = {
