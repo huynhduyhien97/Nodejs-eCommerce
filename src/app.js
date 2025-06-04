@@ -6,12 +6,10 @@ require('dotenv').config();
 const app = express();
 
 // test redis pub sub
-
-require('./tests/inventory.test')
-const productTest = require('./tests/product.test');
-productTest.purchaseProduct('product:001', 10);
-productTest.purchaseProduct('product:002', 10);
-
+// require('./tests/inventory.test')
+// const productTest = require('./tests/product.test');
+// productTest.purchaseProduct('product:001', 10);
+// productTest.purchaseProduct('product:002', 10);
 
 
 // init redis

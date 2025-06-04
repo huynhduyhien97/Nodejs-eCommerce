@@ -23,6 +23,7 @@ class RedisPubSubService {
 	subscribe( channel, callback ) {
 		this.subscriber.subscribe(channel)
 		this.subscriber.on("message", function(subscribeChanel, message) {
+
 			if (channel === subscribeChanel) {
 				callback(channel, message)
 			}
