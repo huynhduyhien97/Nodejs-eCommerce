@@ -5,6 +5,15 @@ const morgan = require( 'morgan' );
 require('dotenv').config();
 const app = express();
 
+// test redis pub sub
+
+require('./tests/inventory.test')
+const productTest = require('./tests/product.test');
+productTest.purchaseProduct('product:001', 10);
+productTest.purchaseProduct('product:002', 10);
+
+
+
 // init redis
 // require('./redis/init.redis');
 
@@ -16,7 +25,7 @@ app.use(express.json()); // parse json request body
 app.use(express.urlencoded({ extended: true }));
 
 // init database
-require('./dbs/init.mongodb');
+require('./dbs/init.mongodb');	
 // const { checkOverload } = require('./helpers/check.connect');
 // checkOverload();
 
