@@ -1,6 +1,8 @@
 'use strict'
 
 const {comment} = require( "../models/comment.model" )
+const {product} = require( "../models/product.model" )
+const {findProduct} = require( "../models/repositories/product.repo" )
 const {getSelectData} = require( "../utils" )
 
 class CommentService {
@@ -86,7 +88,46 @@ class CommentService {
 		})
 
 		return comments
-	}	
+	}
+
+	static async deleteComment({ commentId, productId }) {
+		// check product exists
+		const foundProduct = await findProduct({ productId })
+		if (!foundProduct) throw new Error('Product not found')
+
+		const foundComment = await comment.findById(commentId)
+		if (!foundComment) throw new Error('Comment not found')
+
+		// 1 tim gia tri left - right
+		const { comment_left, comment_right } = foundComment
+	    // 2 tim width
+		const width = comment_right - comment_left + 1
+		// 3 xoa comment con
+		await comment.deleteMany({
+			comment_productId: productId,
+			comment_left: { $gte: comment_left, $lte: comment_right },
+		})
+		// 4 cap nhat lai left - right
+		await comment.updateMany({
+			comment_productId: productId,
+			comment_right: { $gt: comment_right }
+		}, {
+			$inc: { comment_right: -width }
+		}, {
+			multi: true
+		})
+
+		await comment.updateMany({
+			comment_productId: productId,
+			comment_left: { $gt: comment_right }
+		}, {
+			$inc: { comment_left: -width }
+		}, {
+			multi: true
+		})
+
+		return true;
+	}
 }
 
 module.exports = CommentService

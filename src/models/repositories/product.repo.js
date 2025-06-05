@@ -78,8 +78,8 @@ const findAllProducts = async ({ limit, sort, page, filter, select }) => {
 	return products;
 }
 
-const findProduct = async ({ product_id, unSelect }) => {
-	return product.findById(product_id)
+const findProduct = async ({ productId, unSelect }) => {
+	return product.findById(productId)
 		.select(getUnSelectData(unSelect))
 }
 
