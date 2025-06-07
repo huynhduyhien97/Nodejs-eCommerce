@@ -13,7 +13,7 @@ const runConsumer = async () => {
 		channel.consume(queue_name, (msg) => {
 			console.log(`Received message: ${msg.content.toString()}`);
 		}, {
-			noAck: false
+			noAck: true
 		})
 	} catch (err) {
 		console.error(err);

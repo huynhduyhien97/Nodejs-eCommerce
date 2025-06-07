@@ -13,6 +13,11 @@ const runProducer = async () => {
 
 		// Send a message to the queue
 		channel.sendToQueue(queue_name, Buffer.from(messages));
+		console.log(`message sent to ${queue_name} :`, messages);
+		setTimeout(() => {
+			connection.close()
+			process.exit(0)
+		}, 500);
 	} catch (error) {
 		console.error(error)
 	}
