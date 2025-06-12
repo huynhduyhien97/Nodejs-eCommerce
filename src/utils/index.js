@@ -55,6 +55,12 @@ const updateNestedObjectParser = obj => {
 
 const convertToObjectIdMongodb = id => Schema.Types.ObjectId(id);
 
+const checkEnable = (value) => {
+    return value === 'true'
+}
+
+const typeOf = value => Object.prototype.toString.call(value).slice(8, -1);
+
 module.exports = {
 	getInfoData,
 	getSelectData,
@@ -62,4 +68,6 @@ module.exports = {
 	removeUndefinedObject,
 	updateNestedObjectParser,
 	convertToObjectIdMongodb,
+	checkEnable,
+	typeOf,
 }
