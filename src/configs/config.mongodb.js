@@ -1,41 +1,64 @@
 'use strict'
 
-// level 0
-// const config = {
-// 	app : {
-// 		port: 3000
-// 	},
-// 	db : {
-// 		host: 'localhost',
-// 		port: 27017,
-// 		name: 'shopDEV'
-// 	}
-// }
+const mongoose = require('mongoose');
+const {db: {host, name, port}} = require('./config')
 
-// level 01
-const dev = {
-	app : {
-		port: process.env.DEV_APP_PORT || 3052
-	},
-	db : {
-		host: process.env.DEV_DB_HOST || 'localhost',
-		port: process.env.DEV_DB_PORT || 27017,
-		name: process.env.DEV_DB_NAME || 'shopDEV',
+const connectString = `mongodb://${host}:${port}/${name}`;
+
+const { countConnect } = require('../helpers/check.connect');
+const MAX_POLL_SIZE = 50;
+const TIME_OUT_CONNECT = 3000;
+
+// Singleton Pattern - chỉ khởi tạo một kết nối duy nhất
+class Database {
+	constructor() {
+		this.connect()
+	}
+	// connect
+	connect(type = 'mongodb') {
+		// dev
+		if (1 === 1) {
+		  mongoose.set('debug', true)
+		  mongoose.set('debug', { color : true })
+		}
+
+		mongoose.connect(connectString, {
+            maxPoolSize: MAX_POLL_SIZE,
+			serverSelectionTimeoutMS: TIME_OUT_CONNECT,
+		}).then(
+			() => {
+				try {
+					countConnect();
+				} catch (e) {
+					console.log(e);
+				}
+				_ => console.log(`Connected mongodb success `);
+			}
+		).catch(
+			err => console.error(`Error connect!`)
+		);
+
+		mongoose.connection.on('connected', () => {
+            console.log('Mongodb connected to db success');
+        });
+
+        mongoose.connection.on('error', err => {
+            console.error('Mongodb connected to db error' + err);
+        });
+
+        mongoose.connection.on('disconnected', () => {
+            console.log('Mongodb disconnected db success');
+        });
+	}
+	
+	static getInstance() {
+		if (!Database.instance) {
+			Database.instance = new Database();
+		}
+		return Database.instance;
 	}
 }
 
-const pro = {
-	app : {
-		port: process.env.PRO_APP_HOST || 3000
-	},
-	db : {
-		host: process.env.PRO_DB_HOST || 'localhost',
-		port: process.env.PRO_DB_PORT || 27017,
-		name: process.env.PRO_DB_NAME || 'shopPRO',
-	}
-}
+const instanceMongodb = Database.getInstance();
 
-const config = { dev, pro };
-const env = process.env.NODE_ENV || 'dev';
-
-module.exports = config[env];
+module.exports = instanceMongodb;

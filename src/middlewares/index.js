@@ -16,6 +16,11 @@ const pushLogToDiscord = async (req, res, next) => {
 	}
 }
 
+const exit = () => {
+    process.exit(1)
+}
+
 module.exports = {
-	pushLogToDiscord
+	pushLogToDiscord,
+	exit
 }
