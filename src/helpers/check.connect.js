@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const os = require('os');
 const process = require('process');
 
-const _SECONDS = 10000;
+const _SECONDS = 1000 * 60; 
 
 // count connect
 const countConnect = () => {
