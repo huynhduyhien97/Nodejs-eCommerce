@@ -14,4 +14,7 @@ router.post('/product', asyncHandler(uploadController.uploadFile))
 router.post('/product/thumb', uploadDisk.single('file'), asyncHandler(uploadController.uploadImageFromLocal))
 router.post('/product/multiple', uploadDisk.array('files', 3), asyncHandler(uploadController.uploadImageFromLocalFiles))
 
+// using s3 to upload image
+router.post('/product/bucket', uploadDisk.single('file'), asyncHandler(uploadController.uploadImageFromLocalS3))
+
 module.exports = router

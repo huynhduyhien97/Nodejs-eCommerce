@@ -1,7 +1,37 @@
 'use strict'
 
 const cloudinary = require('../configs/config.cloudinary');
+const { s3, PutObjectCommand } = require('../configs/config.aws.s3');
+const crypto = require('crypto');
 
+// AWS S3
+// Upload file using S3Client
+// Upload from local
+const uploadImageFromLocalS3 = async ({ file }) => {
+	try {
+
+		const randomImageName = () => crypto.randomBytes(16).toString('hex');
+
+		const command = new PutObjectCommand({
+			Bucket: process.env.AWS_BUCKET_NAME,
+			Key: randomImageName() || 'unknown',
+			Body: file.buffer, // Buffer cua file
+			ContentType: 'image/jpeg',
+		})
+
+		const result = await s3.send(command); 
+		
+		return result; 
+
+	} catch (error) {
+		console.error('Error uploading image from local using S3Client:', error);
+	}
+}
+
+
+
+
+// Cloudinary
 // Upload from url
 const uploadImageFromUrl = async ({ url }) => {
 	try {
@@ -79,4 +109,5 @@ module.exports = {
 	uploadImageFromUrl,
 	uploadImageFromLocal,
 	uploadImageFromLocalFiles,
+	uploadImageFromLocalS3
 }

@@ -1,6 +1,6 @@
 'use strict'
 
-const { uploadImageFromUrl, uploadImageFromLocal, uploadImageFromLocalFiles } = require('../services/upload.service');
+const { uploadImageFromUrl, uploadImageFromLocal, uploadImageFromLocalFiles, uploadImageFromLocalS3 } = require('../services/upload.service');
 const { SuccessResponse } = require('../core/success.response');
 const {BadRequestError} = require( '../core/error.response' );
 
@@ -31,6 +31,18 @@ class UploadController {
 		new SuccessResponse({
 			message: 'Upload file successfully',
 			metadata: await uploadImageFromLocalFiles({ files })
+		}).send(res);	
+	}
+	
+	// Using s3 to upload image from local
+	uploadImageFromLocalS3 = async (req, res, next) => {
+		const { file } = req;
+		if (!file) {
+			throw new BadRequestError('No file uploaded');
+		}
+		new SuccessResponse({
+			message: 'Upload file successfully',
+			metadata: await uploadImageFromLocalS3({ file })
 		}).send(res);
 	}
 }
