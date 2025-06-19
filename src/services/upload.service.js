@@ -1,8 +1,9 @@
 'use strict'
 
 const cloudinary = require('../configs/config.cloudinary');
-const { s3, PutObjectCommand } = require('../configs/config.aws.s3');
+const { s3, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('../configs/config.aws.s3');
 const crypto = require('crypto');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
 // AWS S3
 // Upload file using S3Client
@@ -11,17 +12,26 @@ const uploadImageFromLocalS3 = async ({ file }) => {
 	try {
 
 		const randomImageName = () => crypto.randomBytes(16).toString('hex');
+		const imageName = randomImageName() || 'unknown';
 
 		const command = new PutObjectCommand({
 			Bucket: process.env.AWS_BUCKET_NAME,
-			Key: randomImageName() || 'unknown',
-			Body: file.buffer, // Buffer cua file
+			Key: imageName,
+			Body: file.buffer, // Buffer cua file	
 			ContentType: 'image/jpeg',
 		})
 
-		const result = await s3.send(command); 
-		
-		return result; 
+		// public url
+		const result = await s3.send(command);
+		console.log(result);
+
+		const signedUrl = new GetObjectCommand({
+			Bucket: process.env.AWS_BUCKET_NAME,
+			Key: imageName,
+		});
+		const url = await getSignedUrl(s3, signedUrl, { expiresIn: 3600 }); // 1 hour
+
+		return url; 
 
 	} catch (error) {
 		console.error('Error uploading image from local using S3Client:', error);

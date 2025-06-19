@@ -4,7 +4,7 @@ const express = require('express')
 const {authenticationV2} = require( '../../auth/authUtils' )
 const asyncHandler = require( '../../helpers/asyncHandler' )
 const uploadController = require( '../../controllers/upload.controller' )
-const {uploadDisk} = require( '../../configs/config.multer' )
+const {uploadDisk, uploadMemory} = require( '../../configs/config.multer' )
 const router = express.Router()
 
 
@@ -15,6 +15,6 @@ router.post('/product/thumb', uploadDisk.single('file'), asyncHandler(uploadCont
 router.post('/product/multiple', uploadDisk.array('files', 3), asyncHandler(uploadController.uploadImageFromLocalFiles))
 
 // using s3 to upload image
-router.post('/product/bucket', uploadDisk.single('file'), asyncHandler(uploadController.uploadImageFromLocalS3))
+router.post('/product/bucket', uploadMemory.single('file'), asyncHandler(uploadController.uploadImageFromLocalS3))
 
 module.exports = router
