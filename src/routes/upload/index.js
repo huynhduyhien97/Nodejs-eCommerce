@@ -11,6 +11,7 @@ const router = express.Router()
 // router.use(authenticationV2)
 
 router.post('/product', asyncHandler(uploadController.uploadFile))
-router.post('/product/thumb', uploadDisk.single('file'), asyncHandler(uploadController.uploadFileThumb))
+router.post('/product/thumb', uploadDisk.single('file'), asyncHandler(uploadController.uploadImageFromLocal))
+router.post('/product/multiple', uploadDisk.array('files', 3), asyncHandler(uploadController.uploadImageFromLocalFiles))
 
 module.exports = router

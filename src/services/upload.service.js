@@ -44,7 +44,39 @@ const uploadImageFromLocal = async ({ path, folderName = `product/shopId` }) => 
 	}
 }
 
+// Upload multiple file from local
+const uploadImageFromLocalFiles = async ({ files, folderName = `product/shopId` }) => {
+	try {
+
+		if (!files.length) return
+
+		const uploadedUrls = [];
+
+		for (const file of files) {
+			const result = await cloudinary.uploader.upload(file.path, {
+				folder: folderName,
+			});
+
+			uploadedUrls.push({
+				shopId: `shopId`,
+				image_url: result.secure_url,
+				thumb_url: await cloudinary.url(result.public_id, {
+					height: 100,
+					width: 100,
+					format: 'jpg',
+				})
+			})
+		}
+
+		return uploadedUrls;
+
+	} catch (error) {
+		console.error('Error uploading images from local:', error);
+	}
+}
+
 module.exports = {
 	uploadImageFromUrl,
-	uploadImageFromLocal
+	uploadImageFromLocal,
+	uploadImageFromLocalFiles,
 }
