@@ -9,6 +9,8 @@ const router = express.Router()
 // router.use(pushLogToDiscord)
 
 // check apiKey
+// nằm ở proxy server, sẽ được cấp phát cho doanh nghiệp hoặc người dùng
+// được dùng để xác thực và phân quyền truy cập (limit rate, request per minute, expiration time, etc.)
 router.use(apiKey)
 
 // check permission
